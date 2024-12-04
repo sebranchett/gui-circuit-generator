@@ -26,6 +26,7 @@
         <button id="addCapacitor">Add Capacitor</button>
         <button id="clear">Clear</button>
         <button id="saveToFile">Save</button>
+            <a download="circuit.json" id="downloadlink" style="display: none">Download</a>
     </div>
     <canvas id="circuitCanvas" width="800" height="600"></canvas>
     <script>
@@ -107,16 +108,20 @@
             elements.push({ id, type, x, y });
             redraw();
         }
+        // Save the circuit to a file for download
+        function createDownloadLink() {
+            var circuit = JSON.stringify({ elements, connections });
+            var textFile = new Blob([circuit], { type: 'application/json' });
+            var link = document.getElementById('downloadlink');
+            link.href = URL.createObjectURL(textFile);
+            link.download = 'circuit.json';
+            link.style.display = 'block';
+            // link.click();
+            // link.style.display = 'none';
+        }
 
-        // Save the circuit to a file
-        document.getElementById('saveToFile').addEventListener('click', () => {
-            const circuit = { elements, connections };
-            const data = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(circuit))}`;
-            const a = document.createElement('a');
-            a.href = data;
-            a.download = 'circuit.json';
-            a.click();
-        });
+        // Call the function to create the download link when the 'saveToFile' button is clicked
+        document.getElementById('saveToFile').addEventListener('click', createDownloadLink);
 
         // Handle mouse events for dragging and connecting
         canvas.addEventListener('mousedown', (event) => {
