@@ -6,11 +6,11 @@
     "scripts": {
         "test": "mocha 'tests/**/*.test.js'"
     },
+    "type": "module",
     "author": "",
     "license": "ISC",
-    "dependencies": {},
     "devDependencies": {
-      "mocha": "^10.0.0",
-      "chai": "^4.3.6"
+        "chai": "^4.5.0",
+        "mocha": "^10.0.0"
     }
-  }
+}
