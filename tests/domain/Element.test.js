@@ -1,85 +1,83 @@
 import { expect } from 'chai';
 import { Element } from '../../src/domain/entities/Element.js';
-import { Position } from '../../src/domain/value-objects/Position.js';
-import { Resistance } from '../../src/domain/value-objects/Resistance.js';
+import { Position } from '../../src/domain/valueObjects/Position.js';
+import { Label } from '../../src/domain/valueObjects/Label.js';
+import { Properties } from '../../src/domain/valueObjects/Properties.js';
 
+console.log("This test runs successfully")
+
+describe('Basic Import Test', () => {
+    it('should import Element successfully', () => {
+        expect(Element).to.be.a('function');
+    });
+});
 /**
- * MockElement class extends the Element class to create a mock element for testing purposes.
- * 
- * @class
- * @extends Element
- * 
- * @param {string} id - The unique identifier for the element.
- * @param {Array} [terminals=[]] - The terminals associated with the element.
- * @param {Object} [properties={}] - The properties of the element.
- * @param {string} [label=''] - The label for the element.
+ * MockElement class extends the Element class for testing purposes.
  */
 class MockElement extends Element {
-    constructor(id, terminals = [], properties = {}, label = '') {
-        super(id, terminals, properties, label);
+    constructor(id, terminals = [], label = null, properties = new Properties()) {
+        super(id, terminals, label, properties);
         this.type = 'mock';
-        this.terminals = terminals;
-        this.properties = { ...properties };
     }
 }
 
 describe('Element Class Tests', () => {
     it('An element should have a unique identifier', () => {
-        const element = new MockElement('E1', []);
+        const element = new MockElement('E1', [new Position(10, 20)], null, new Properties());
         expect(element.id).to.equal('E1');
     });
 
-    it('An element should have default properties', () => {
-        const element = new MockElement('E2', [], { resistance: new Resistance(100) });
-        expect(element.properties.resistance.value).to.equal(100);
+    it('An element should validate terminals as an array of Position instances', () => {
+        const terminals = [new Position(10, 20), new Position(30, 40)];
+        const element = new MockElement('E2', terminals, null, new Properties());
+        expect(element.terminals).to.deep.equal(terminals);
     });
 
-    it('An element should support editable properties', () => {
-        const element = new MockElement('E3', [], { resistance: new Resistance(100) });
-        element.properties.resistance = new Resistance(200);
-        expect(element.properties.resistance.value).to.equal(200);
+    it('An element should throw an error if terminals are invalid', () => {
+        expect(() => new MockElement('E3', [10, 20], null, new Properties())).to.throw(
+            "Terminals must be an array of Position instances."
+        );
+    });
+
+    it('An element should accept a label of type Label or null', () => {
+        const label = new Label('Test Label');
+        const element = new MockElement('E4', [new Position(10, 20)], label, new Properties());
+        expect(element.label).to.equal(label);
+    });
+
+    it('An element should throw an error if label is invalid', () => {
+        expect(() => new MockElement('E5', [new Position(10, 20)], 'Invalid Label', new Properties())).to.throw(
+            "Label must be an instance of Label or null."
+        );
+    });
+
+    it('An element should accept properties of type Properties', () => {
+        const properties = new Properties({ resistance: 100 });
+        const element = new MockElement('E6', [new Position(10, 20)], null, properties);
+        expect(element.properties).to.equal(properties);
+    });
+
+    it('An element should throw an error if properties are invalid', () => {
+        expect(() => new MockElement('E7', [new Position(10, 20)], null, { invalid: 'properties' })).to.throw(
+            "Properties must be an instance of Properties."
+        );
     });
 
     it('An element should be abstract and not directly instantiable', () => {
-        expect(() => new Element('E4', [])).to.throw('Cannot instantiate abstract class Element directly.');
+        expect(() => new Element('E8', [new Position(10, 20)], null, new Properties())).to.throw(
+            "Cannot instantiate abstract class Element directly."
+        );
     });
 
-    it('An element should support multiple properties', () => {
-        const element = new MockElement('E5', [], { resistance: new Resistance(100), capacitance: 0.01 });
-        expect(element.properties.resistance.value).to.equal(100);
-        expect(element.properties.capacitance).to.equal(0.01);
-    });
+    it('An element should support the describe method', () => {
+        const terminals = [new Position(10, 20), new Position(30, 40)];
+        const label = new Label('Test Label');
+        const properties = new Properties({ resistance: 100 });
+        const element = new MockElement('E9', terminals, label, properties);
 
-    it('An element should use value objects for shared properties', () => {
-        const position = new Position(10, 20);
-        const element = new MockElement('E6', [{ name: 'A', position }]);
-        expect(element.terminals[0].position.equals(position)).to.be.true;
-    });
-
-    it('The position of an element should depend on its terminals', () => {
-        const position1 = new Position(10, 20);
-        const position2 = new Position(30, 40);
-        const element = new MockElement('E7', [
-            { name: 'A', position: position1 },
-            { name: 'B', position: position2 },
-        ]);
-        expect(element.terminals.length).to.equal(2);
-        expect(element.terminals[0].position.equals(position1)).to.be.true;
-        expect(element.terminals[1].position.equals(position2)).to.be.true;
-    });
-
-    it('An element should support labeling', () => {
-        const element = new MockElement('E8', [], {}, 'Test Label');
-        expect(element.label).to.equal('Test Label');
-    });
-
-    it('A junction should be a valid element', () => {
-        const junction = new MockElement('J1', [
-            { name: 'T1', position: new Position(10, 20) },
-            { name: 'T2', position: new Position(30, 40) },
-            { name: 'T3', position: new Position(50, 60) },
-        ]);
-        expect(junction.type).to.equal('mock');
-        expect(junction.terminals.length).to.equal(3);
+        const description = element.describe();
+        expect(description).to.equal(
+            'mock (E9): terminals: [(10, 20), (30, 40)], label: "Test Label", properties: resistance: 100'
+        );
     });
 });
