@@ -1,0 +1,16 @@
+{
+    "name": "qucat-circuit-generator",
+    "version": "1.0.0",
+    "description": "A project for generating and testing circuits",
+    "main": "main.js",
+    "scripts": {
+        "test": "mocha 'tests/**/*.test.js'"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {
+      "mocha": "^10.0.0",
+      "chai": "^4.3.6"
+    }
+  }
