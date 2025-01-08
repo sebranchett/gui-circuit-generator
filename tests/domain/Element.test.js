@@ -4,7 +4,6 @@ import { Position } from '../../src/domain/valueObjects/Position.js';
 import { Label } from '../../src/domain/valueObjects/Label.js';
 import { Properties } from '../../src/domain/valueObjects/Properties.js';
 
-console.log("This test runs successfully")
 
 describe('Basic Import Test', () => {
     it('should import Element successfully', () => {
