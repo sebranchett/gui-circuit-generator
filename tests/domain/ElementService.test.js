@@ -23,6 +23,10 @@ describe('Element Service Tests', () => {
                 "Terminals must be an array of Position instances."
             );
         });
+
+        it('TO BE CHECKED: All elements should have a label except for wires and junctions', () => {
+            expect(false).to.be.true; // Implement a test for this requirement
+        });
     });
 
     describe('Element Deletion', () => {
@@ -107,4 +111,39 @@ describe('Element Service Tests', () => {
             );
         });
     });
+
+    describe('Element Service Property Updates', () => {
+        it('should update properties through ElementService', () => {
+            const terminals = [new Position(10, 20)];
+            const properties = new Properties({ resistance: 100 });
+            const element = new MockElement('E2', terminals, null, properties);
+    
+            // Update the property to a new float value
+            ElementService.updateProperties(element, { resistance: 200 });
+    
+            expect(element.properties.values.resistance).to.equal(200);
+        });
+
+        it('should allow to define a property as undefined', () => {
+            const terminals = [new Position(10, 20)];
+            const properties = new Properties({ resistance: 100 });
+            const element = new MockElement('E1', terminals, null, properties);
+    
+            // Update the property to undefined
+            ElementService.updateProperties(element, { resistance: "undefined" });
+    
+            expect(element.properties.values.resistance).to.equal("undefined");
+        });
+    
+        it('should allow defining properties as a variable parameter for the simulation engine', () => {
+            const terminals = [new Position(10, 20)];
+            const properties = new Properties({ resistance: 100 });
+            const element = new MockElement('E3', terminals, null, properties);
+    
+            // Define the property as "variable"
+            ElementService.updateProperties(element, { resistance: "variable" });
+    
+            expect(element.properties.values.resistance).to.equal("variable");
+        });
+    });  
 });

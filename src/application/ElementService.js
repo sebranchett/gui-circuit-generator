@@ -88,4 +88,20 @@ export class ElementService {
         const newY = Math.round(x * sin + y * cos);
         return [newX, newY];
     }
+
+    /**
+     * Updates properties of an element.
+     * 
+     * @param {Element} element - The element whose properties are being updated.
+     * @param {Object} updates - An object containing property updates.
+     * @throws {Error} If any property value is invalid.
+     */
+    static updateProperties(element, updates) {
+        Object.entries(updates).forEach(([key, value]) => {
+            if (!element.properties.isValidValue(value)) {
+                throw new Error(`Invalid value for property "${key}". Must be a float, "variable", or "undefined".`);
+            }
+            element.properties.values[key] = value;
+        });
+    }
 }

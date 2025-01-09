@@ -56,6 +56,26 @@ describe('Element Class Tests', () => {
         expect(element.properties).to.equal(properties);
     });
 
+    it('Properties should accept a float, a "variable" string, or "undefined"', () => {
+        // Valid cases
+        const validProperties1 = new Properties({ resistance: 100, capacitance: "variable", inductance: "undefined" });
+        expect(validProperties1.values.resistance).to.equal(100);
+        expect(validProperties1.values.capacitance).to.equal("variable");
+        expect(validProperties1.values.inductance).to.equal("undefined");
+    
+        // Invalid cases
+        expect(() => new Properties({ resistance: true })).to.throw(
+            'Invalid value for property "resistance". Must be a float, "variable", or "undefined".'
+        );
+        expect(() => new Properties({ capacitance: null })).to.throw(
+            'Invalid value for property "capacitance". Must be a float, "variable", or "undefined".'
+        );
+        expect(() => new Properties({ inductance: {} })).to.throw(
+            'Invalid value for property "inductance". Must be a float, "variable", or "undefined".'
+        );
+    });
+    
+
     it('An element should throw an error if properties are invalid', () => {
         expect(() => new MockElement('E7', [new Position(10, 20)], null, { invalid: 'properties' })).to.throw(
             "Properties must be an instance of Properties."
