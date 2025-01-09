@@ -1,5 +1,7 @@
 import { expect } from 'chai';
 import { Element } from '../../src/domain/entities/Element.js';
+import { Resistor } from '../../src/domain/entities/Resistor.js';
+import { Wire } from '../../src/domain/entities/Wire.js';
 import { MockElement } from './MockElement.js'; // A mock element class for testing
 import { Position } from '../../src/domain/valueObjects/Position.js';
 import { Label } from '../../src/domain/valueObjects/Label.js';
@@ -80,4 +82,10 @@ describe('Element Class Tests', () => {
     
     // Tests for MockElement
     testElementSubclass('MockElement', MockElement, { mockProperty: 42 });
+
+    // Tests for Resistor
+    testElementSubclass('Resistor', Resistor, { resistance: 100 });
+
+    // Tests for Wire
+    testElementSubclass('Wire', Wire, {});
 });
