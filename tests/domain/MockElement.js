@@ -15,6 +15,6 @@ export class MockElement extends Element {
      */
     constructor(id, terminals = [], label = null, properties = new Properties()) {
         super(id, terminals, label, properties);
-        this.type = 'mock';
+        this.type = 'mockelement';
     }
 }
