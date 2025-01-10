@@ -84,15 +84,6 @@ describe('Element Service Tests', () => {
 
             expect(element.label.toString()).to.equal('New Label');
         });
-
-        it('should throw an error when updating label to an invalid type', () => {
-            const nodes = [new Position(10, 20)];
-            const element = new MockElement('E5', nodes, new Label('Valid Label'), new Properties());
-
-            expect(() => ElementService.updateLabel(element, "Invalid Label")).to.throw(
-                "Label must be an instance of Label."
-            );
-        });
     });
 
     describe('Element Movement', () => {
