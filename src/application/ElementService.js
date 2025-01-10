@@ -22,7 +22,7 @@ export class ElementService {
      * @param {string} id - The unique identifier of the element to delete.
      * @returns {Element[]} The updated list of elements.
      */
-    static deleteElement(elements, id) {
+    static delete(elements, id) {
         return elements.filter(element => element.id !== id);
     }
 
@@ -32,7 +32,7 @@ export class ElementService {
      * @param {Element} element - The element to move.
      * @param {Position} newReferencePosition - The new position for the reference terminal.
      */
-    static moveElement(element, newReferencePosition) {
+    static move(element, newReferencePosition) {
         const refTerminal = element.terminals[0]; // Reference terminal
         const deltaX = newReferencePosition.x - refTerminal.x;
         const deltaY = newReferencePosition.y - refTerminal.y;
@@ -48,7 +48,7 @@ export class ElementService {
      * @param {Element} element - The element to rotate.
      * @param {number} newOrientation - The new orientation (0, 90, 180, or 270 degrees).
      */
-    static rotateElement(element, newOrientation) {
+    static rotate(element, newOrientation) {
         if (![0, 90, 180, 270].includes(newOrientation)) {
             throw new Error("Orientation must be one of 0, 90, 180, or 270 degrees.");
         }

@@ -33,7 +33,7 @@ describe('Element Service Tests', () => {
             const element = new MockElement('E3', terminals, null, properties);
 
             let elements = [element];
-            elements = ElementService.deleteElement(elements, 'E3');
+            elements = ElementService.delete(elements, 'E3');
 
             expect(elements).to.be.an('array').that.is.empty;
         });
@@ -44,7 +44,7 @@ describe('Element Service Tests', () => {
             const element = new MockElement('E4', terminals, null, properties);
 
             let elements = [element];
-            elements = ElementService.deleteElement(elements, 'NonExistentID');
+            elements = ElementService.delete(elements, 'NonExistentID');
 
             expect(elements).to.have.lengthOf(1);
             expect(elements[0].id).to.equal('E4');
@@ -56,7 +56,7 @@ describe('Element Service Tests', () => {
             const terminals = [new Position(10, 20), new Position(30, 40)];
             const element = new MockElement('E5', terminals, null, new Properties());
 
-            ElementService.moveElement(element, new Position(20, 30));
+            ElementService.move(element, new Position(20, 30));
 
             expect(element.terminals).to.deep.equal([
                 new Position(20, 30),
@@ -68,7 +68,7 @@ describe('Element Service Tests', () => {
             const terminals = [new Position(10, 20), new Position(30, 40)];
             const element = new MockElement('E6', terminals, null, new Properties());
 
-            ElementService.moveElement(element, new Position(10, 20));
+            ElementService.move(element, new Position(10, 20));
 
             expect(element.terminals).to.deep.equal(terminals);
         });
@@ -79,7 +79,7 @@ describe('Element Service Tests', () => {
             const terminals = [new Position(10, 10), new Position(20, 10)];
             const element = new MockElement('E7', terminals, null, new Properties());
 
-            ElementService.rotateElement(element, 90);
+            ElementService.rotate(element, 90);
 
             expect(element.terminals).to.deep.equal([
                 new Position(10, 10), // Reference terminal remains unchanged
@@ -91,7 +91,7 @@ describe('Element Service Tests', () => {
             const terminals = [new Position(10, 10), new Position(20, 10)];
             const element = new MockElement('E8', terminals, null, new Properties());
 
-            ElementService.rotateElement(element, 180);
+            ElementService.rotate(element, 180);
 
             expect(element.terminals).to.deep.equal([
                 new Position(10, 10), // Reference terminal remains unchanged
@@ -103,7 +103,7 @@ describe('Element Service Tests', () => {
             const terminals = [new Position(10, 10), new Position(20, 10)];
             const element = new MockElement('E9', terminals, null, new Properties());
 
-            expect(() => ElementService.rotateElement(element, 45)).to.throw(
+            expect(() => ElementService.rotate(element, 45)).to.throw(
                 "Orientation must be one of 0, 90, 180, or 270 degrees."
             );
         });
