@@ -29,15 +29,15 @@ describe('Element Class Tests', () => {
                 expect(element.id).to.equal('E1');
             });
 
-            it(`A ${type.toLowerCase()} should validate terminals as an array of Position instances`, () => {
-                const terminals = [new Position(10, 20), new Position(30, 40)];
-                const element = new ElementClass('E2', terminals, null, new Properties(defaultProperties));
-                expect(element.terminals).to.deep.equal(terminals);
+            it(`A ${type.toLowerCase()} should validate nodes as an array of Position instances`, () => {
+                const nodes = [new Position(10, 20), new Position(30, 40)];
+                const element = new ElementClass('E2', nodes, null, new Properties(defaultProperties));
+                expect(element.nodes).to.deep.equal(nodes);
             });
 
-            it(`A ${type.toLowerCase()} should throw an error if terminals are invalid`, () => {
+            it(`A ${type.toLowerCase()} should throw an error if nodes are invalid`, () => {
                 expect(() => new ElementClass('E3', [10, 20], null, new Properties(defaultProperties))).to.throw(
-                    "Terminals must be an array of Position instances."
+                    "Nodes must be an array of Position instances."
                 );
             });
 
@@ -66,14 +66,14 @@ describe('Element Class Tests', () => {
             });
 
             it(`A ${type.toLowerCase()} should support the describe method`, () => {
-                const terminals = [new Position(10, 20), new Position(30, 40)];
+                const nodes = [new Position(10, 20), new Position(30, 40)];
                 const label = new Label(`${type} Label`);
                 const properties = new Properties(defaultProperties);
 
-                const element = new ElementClass('E8', terminals, label, properties);
+                const element = new ElementClass('E8', nodes, label, properties);
 
                 const description = element.describe();
-                expect(description).to.include(`${type.toLowerCase()} (E8): terminals:`);
+                expect(description).to.include(`${type.toLowerCase()} (E8): nodes:`);
                 expect(description).to.include(`label: "${type} Label"`);
                 expect(description).to.include(`properties:`);
             });

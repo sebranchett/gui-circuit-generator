@@ -1,8 +1,8 @@
 import { Element } from './Element.js';
 
 export class Wire extends Element {
-    constructor(id, terminals, label = null, properties = new Properties()) {
-        super(id, terminals, label, properties);
+    constructor(id, nodes, label = null, properties = new Properties()) {
+        super(id, nodes, label, properties);
         this.type = 'wire';
     }
 }
