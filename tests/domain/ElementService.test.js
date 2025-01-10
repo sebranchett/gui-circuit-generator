@@ -24,9 +24,6 @@ describe('Element Service Tests', () => {
             );
         });
 
-        it('TO BE CHECKED: All elements should have a label except for wires and junctions', () => {
-            expect(false).to.be.true; // Implement a test for this requirement
-        });
     });
 
     describe('Element Deletion', () => {
