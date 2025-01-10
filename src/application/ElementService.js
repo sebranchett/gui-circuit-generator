@@ -7,12 +7,12 @@ export class ElementService {
      * 
      * @param {Function} ElementClass - The class of the element to create (e.g., Resistor, Junction).
      * @param {string} id - The unique identifier for the element.
-     * @param {Position[]} terminals - The terminal positions.
+     * @param {Position[]} nodes - The node positions.
      * @param {Object} propertiesArgs - The arguments for the specific properties container.
      * @returns {Element} The newly created element.
      */
-    static createElement(ElementClass, id, terminals, propertiesArgs) {
-        return new ElementClass(id, terminals, ...propertiesArgs);
+    static createElement(ElementClass, id, nodes, propertiesArgs) {
+        return new ElementClass(id, nodes, ...propertiesArgs);
     }
 
     /**
@@ -27,18 +27,18 @@ export class ElementService {
     }
 
     /**
-     * Moves an element to a new position, updating all terminal positions.
+     * Moves an element to a new position, updating all node positions.
      * 
      * @param {Element} element - The element to move.
-     * @param {Position} newReferencePosition - The new position for the reference terminal.
+     * @param {Position} newReferencePosition - The new position for the reference node.
      */
     static moveElement(element, newReferencePosition) {
-        const refTerminal = element.terminals[0]; // Reference terminal
-        const deltaX = newReferencePosition.x - refTerminal.x;
-        const deltaY = newReferencePosition.y - refTerminal.y;
+        const refNode = element.nodes[0]; // Reference node
+        const deltaX = newReferencePosition.x - refNode.x;
+        const deltaY = newReferencePosition.y - refNode.y;
 
-        element.terminals = element.terminals.map(terminal => 
-            new Position(terminal.x + deltaX, terminal.y + deltaY)
+        element.nodes = element.nodes.map(node => 
+            new Position(node.x + deltaX, node.y + deltaY)
         );
     }
 
@@ -53,16 +53,16 @@ export class ElementService {
             throw new Error("Orientation must be one of 0, 90, 180, or 270 degrees.");
         }
 
-        const refTerminal = element.terminals[0]; // Reference terminal
-        const refX = refTerminal.x;
-        const refY = refTerminal.y;
+        const refNode = element.nodes[0]; // Reference node
+        const refX = refNode.x;
+        const refY = refNode.y;
 
-        element.terminals = element.terminals.map((terminal, index) => {
-            if (index === 0) return terminal; // Keep the reference terminal unchanged
+        element.nodes = element.nodes.map((node, index) => {
+            if (index === 0) return node; // Keep the reference node unchanged
 
             // Calculate relative position
-            const relX = terminal.x - refX;
-            const relY = terminal.y - refY;
+            const relX = node.x - refX;
+            const relY = node.y - refY;
 
             // Rotate relative position
             const [newRelX, newRelY] = ElementService._rotatePosition(relX, relY, newOrientation);
