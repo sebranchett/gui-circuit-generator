@@ -5,7 +5,7 @@
     "main": "main.js",
     "scripts": {
         "test": "mocha 'tests/**/*.test.js'",
-        "build": "rollup -c"
+        "build": "rollup -c && cp src/gui/gui.html dist/"
     },
     "type": "module",
     "author": "",
