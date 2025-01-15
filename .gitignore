@@ -3,3 +3,6 @@ dev-notes
 
 # ignore node dependencies
 node_modules
+
+# Ignored build files
+dist/

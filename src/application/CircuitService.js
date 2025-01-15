@@ -1,5 +1,7 @@
 import { Circuit } from '../domain/aggregates/Circuit.js';
 import { Element } from '../domain/entities/Element.js';
+import { generateId } from '../utils/idGenerator.js'; // Import the ID generator
+
 
 /**
  * CircuitService orchestrates operations on the Circuit aggregate,
@@ -31,6 +33,12 @@ export class CircuitService {
      * @throws {Error} If the element violates circuit rules.
      */
     addElement(element) {
+        // Generate an ID if the element does not already have one
+        if (!element.id) {
+            const prefix = element.type.charAt(0).toUpperCase(); // e.g., "R" for Resistor
+            element.id = generateId(prefix);
+        }
+    
         this.circuit.validateAddElement(element); // Delegate validation to Circuit
         this.circuit.elements.push(element); // Add the element to the circuit
     }
@@ -89,5 +97,17 @@ export class CircuitService {
             }
         }
         return connectedElements;
+    }
+
+    /**
+     * Retrieves all elements in the circuit.
+     * 
+     * This is a simple delegate method to provide read-only access
+     * to the elements of the circuit aggregate.
+     * 
+     * @returns {Element[]} The list of elements in the circuit.
+     */
+    getElements() {
+        return [...this.circuit.elements]; // Return a shallow copy to avoid direct modification
     }
 }
