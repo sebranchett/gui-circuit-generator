@@ -13,7 +13,6 @@ export class WireComponent {
     addWire() {
         console.log('Adding wire...');
         const wire = this.circuitService.createElement('Wire', {
-            id: `W${Date.now()}`,
             nodes: [
                 { x: 150, y: 150 }, // Start position
                 { x: 250, y: 150 }  // End position

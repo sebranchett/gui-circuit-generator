@@ -13,7 +13,6 @@ export class ResistorComponent {
     addResistor() {
         console.log('Adding resistor...');
         const resistor = this.circuitService.createElement('Resistor', {
-            id: `R${Date.now()}`,
             nodes: [
                 { x: 100, y: 100 }, // Start position
                 { x: 200, y: 100 }  // End position
