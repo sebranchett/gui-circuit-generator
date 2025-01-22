@@ -1,5 +1,7 @@
 dev-notes
 .trunk
+.ipynb_checkpoints/
+.vscode/
 
 # ignore node dependencies
 node_modules
