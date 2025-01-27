@@ -50,6 +50,8 @@ import ElementRegistry from '../../config/settings.js';
 export class GUIAdapter {
     /**
      * @param {HTMLCanvasElement} canvas - The canvas element for rendering the circuit.
+     * @param {CircuitService} circuitService - The service managing circuit logic.
+     * @param {Object} [elementRegistry] - The registry of circuit elements to bind UI controls to.
      */
     constructor(canvas, circuitService, elementRegistry) {
         this.canvas = canvas;
@@ -111,5 +113,24 @@ export class GUIAdapter {
 
         // Bind UI controls to actions
         this.bindUIControls();
+    }
+
+    /**
+     * Sets up mouse interactions for dragging terminals.
+     */
+    setupCanvasInteractions() {
+        this.canvas.addEventListener('mousedown', (event) => {
+            const { offsetX, offsetY } = event;
+            this.circuitRenderer.startDrag(offsetX, offsetY);
+        });
+
+        this.canvas.addEventListener('mousemove', (event) => {
+            const { offsetX, offsetY } = event;
+            this.circuitRenderer.dragElement(offsetX, offsetY);
+        });
+
+        this.canvas.addEventListener('mouseup', () => {
+            this.circuitRenderer.stopDrag();
+        });
     }
 }

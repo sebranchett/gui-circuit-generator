@@ -35,6 +35,10 @@ describe('GUIAdapter Tests', () => {
                 moveTo: sinon.spy(),
                 lineTo: sinon.spy(),
                 stroke: sinon.spy(),
+                arc: sinon.spy(),
+                fill: sinon.spy(),
+                fillRect: sinon.spy(),
+                fillText: sinon.spy(),
             }),
         };
     
@@ -79,7 +83,6 @@ describe('GUIAdapter Tests', () => {
 
         // Spy on CircuitService.addElement
         const addElementSpy = sinon.spy(guiAdapter.circuitService, 'addElement');
-        console.log('Spy on addElement created:', addElementSpy);
 
         guiAdapter.bindUIControls();
 
