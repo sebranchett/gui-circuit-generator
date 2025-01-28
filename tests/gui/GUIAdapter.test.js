@@ -4,6 +4,9 @@ import { setupJsdom } from '../setup/jsdomSetup.js';
 import { GUIAdapter } from '../../src/gui/adapters/GUIAdapter.js';
 import { Circuit } from '../../src/domain/aggregates/Circuit.js';
 import { CircuitService } from '../../src/application/CircuitService.js';
+import { RendererFactory } from '../../src/gui/renderers/RendererFactory.js';
+import { ElementRegistry, rendererFactory } from '../../src/config/settings.js';
+
 
 describe('GUIAdapter Tests', () => {
     let canvas;
@@ -12,18 +15,12 @@ describe('GUIAdapter Tests', () => {
     beforeEach(() => {
         setupJsdom();
     
-        // Add mock buttons to the DOM
-        const resistorButton = document.createElement('button');
-        resistorButton.id = 'addResistor';
-        document.body.appendChild(resistorButton);
-    
-        const wireButton = document.createElement('button');
-        wireButton.id = 'addWire';
-        document.body.appendChild(wireButton);
-    
-        // Spy on addEventListener
-        sinon.spy(resistorButton, 'addEventListener');
-        sinon.spy(wireButton, 'addEventListener');
+        // Add required buttons to the DOM
+        ['addResistor', 'addWire'].forEach((id) => {
+            const button = document.createElement('button');
+            button.id = id;
+            document.body.appendChild(button);
+        });
     
         // Mock canvas element
         canvas = {
@@ -40,17 +37,14 @@ describe('GUIAdapter Tests', () => {
                 fillRect: sinon.spy(),
                 fillText: sinon.spy(),
             }),
+            addEventListener: sinon.spy(),
+            removeEventListener: sinon.spy(),
         };
     
-        // Create a CircuitService with a mock Circuit
+        // Create GUIAdapter instance
         const circuit = new Circuit();
         const circuitService = new CircuitService(circuit);
-        guiAdapter = new GUIAdapter(canvas, circuitService);
-    
-        // Stub ElementRegistry to only include Resistor
-        guiAdapter.elementRegistry = {
-            Resistor: () => {},
-        };
+        guiAdapter = new GUIAdapter(canvas, circuitService, ElementRegistry, rendererFactory);
     });
     
     it('should initialize without errors', () => {
@@ -84,24 +78,21 @@ describe('GUIAdapter Tests', () => {
         // Spy on CircuitService.addElement
         const addElementSpy = sinon.spy(guiAdapter.circuitService, 'addElement');
 
+        sinon.spy(resistorButton, 'addEventListener');
         guiAdapter.bindUIControls();
 
         // Verify single event listener registration
         expect(resistorButton.addEventListener.callCount).to.equal(1);
 
-        // Simulate button click
-        const registeredHandler = resistorButton.addEventListener.args[0][1];
-        expect(registeredHandler).to.be.a('function');
-
-        // Call the registered handler
-        registeredHandler();
+        // Simulates a real DOM clicc
+        resistorButton.click();
 
         // Verify addElement was called once
         expect(addElementSpy.calledOnce).to.be.true;
 
         // Verify the added element's type, properties, and nodes
         const addedElement = addElementSpy.args[0][0];
-        expect(addedElement).to.have.property('type', 'Resistor');
+        expect(addedElement).to.have.property('type', 'resistor');
         expect(addedElement).to.have.property('nodes').that.is.an('array').with.lengthOf(2);
         expect(addedElement).to.have.property('properties').that.is.an('object');
     });

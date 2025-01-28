@@ -1,18 +1,24 @@
 import { ElementRegistry } from '../adapters/ElementRegistry.js';
-import { generateId } from '../utils/idGenerator.js';
+import { RendererFactory } from '../gui/renderers/RendererFactory.js';
 import { Resistor } from '../domain/entities/Resistor.js';
 import { Wire } from '../domain/entities/Wire.js';
+import { ResistorRenderer } from '../gui/renderers/ResistorRenderer.js';
+import { WireRenderer } from '../gui/renderers/WireRenderer.js';
+import { generateId } from '../utils/idGenerator.js';
 import { Properties } from '../domain/valueObjects/Properties.js';
-import { Label } from '../domain/valueObjects/Label.js';
 
-// Register Resistor
-ElementRegistry.register('Resistor', (id = generateId('R'), nodes, label = null, properties = {}) => 
-    new Resistor(id, nodes, label = null , new Properties(properties))
+// Configure ElementRegistry
+ElementRegistry.register('Resistor', (id = generateId('R'), nodes, label = null, properties = {}) =>
+    new Resistor(id, nodes, label, new Properties(properties))
+);
+ElementRegistry.register('Wire', (id = generateId('W'), nodes, label = null, properties = {}) =>
+    new Wire(id, nodes, label, new Properties(properties))
 );
 
-// Register Wire
-ElementRegistry.register('Wire', (id = generateId('W'), nodes, label = null, properties = {}) => 
-    new Wire(id, nodes, label = null , new Properties(properties))
-);
+// Configure RendererFactory
+const rendererFactory = new RendererFactory();
+rendererFactory.register('resistor', ResistorRenderer);
+rendererFactory.register('wire', WireRenderer);
 
-export default ElementRegistry;
+export { ElementRegistry, rendererFactory };
+export default ElementRegistry; // Add default export

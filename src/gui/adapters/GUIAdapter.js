@@ -44,35 +44,28 @@
 import { Position } from '../../domain/valueObjects/Position.js';
 import { Circuit } from '../../domain/aggregates/Circuit.js';
 import { CircuitService } from '../../application/CircuitService.js';
-import { CircuitRenderer } from '../components/CircuitRenderer.js';
-import ElementRegistry from '../../config/settings.js';
+import { CircuitRenderer } from '../renderers/CircuitRenderer.js';
 
 export class GUIAdapter {
     /**
      * @param {HTMLCanvasElement} canvas - The canvas element for rendering the circuit.
      * @param {CircuitService} circuitService - The service managing circuit logic.
-     * @param {Object} [elementRegistry] - The registry of circuit elements to bind UI controls to.
+     * @param {Object} elementRegistry - The registry of circuit elements to bind UI controls to.
+     * @param {RendererFactory} rendererFactory - The factory for creating element renderers.
      */
-    constructor(canvas, circuitService, elementRegistry) {
+    constructor(canvas, circuitService, elementRegistry, rendererFactory) {
         this.canvas = canvas;
         this.circuitService = circuitService;
-        this.circuitRenderer = new CircuitRenderer(canvas, circuitService);
-        this.elementRegistry = elementRegistry || {};
-    }    
+        this.circuitRenderer = new CircuitRenderer(canvas, circuitService, rendererFactory);
+        this.elementRegistry = elementRegistry; // Use consistently
+    }
 
     /**
-     * Dynamically binds UI controls to their corresponding actions based on the `ElementRegistry` (e.g., "addResistor", "addWire").
+     * Dynamically binds UI controls to their corresponding actions based on the `elementRegistry`.
      */
     bindUIControls() {
-        if (this.controlsBound) {
-            console.warn('UI controls already bound. Skipping.');
-            return;
-        }
-        this.controlsBound = true;
-    
-        Object.keys(ElementRegistry)
-        .filter((key) => typeof ElementRegistry[key] === 'function' && !['register', 'create'].includes(key))
-        .forEach((type) => {
+        // Use the new getTypes method to retrieve registered element types
+        this.elementRegistry.getTypes().forEach((type) => {
             const buttonId = `add${type}`;
             const button = document.getElementById(buttonId);
     
@@ -80,43 +73,48 @@ export class GUIAdapter {
                 console.warn(`Button with ID "${buttonId}" not found.`);
                 return;
             }
-    
+
             button.addEventListener('click', () => {
-                const properties = {}; // Placeholder for element properties
                 const nodes = [this.randomPosition(), this.randomPosition()];
+                const properties = {}; // Placeholder for properties
+
+                // Retrieve the factory function and create the element
+                const factory = this.elementRegistry.get(type);
+                if (!factory) {
+                    console.error(`Factory function for element type "${type}" not found.`);
+                    return;
+                }
     
-                // Create and add the element using CircuitService
-                this.circuitService.addElement({ type, properties, nodes });
+                const element = factory(undefined, nodes, null, properties);
     
-                // Render the updated circuit
+                // Add the element to the circuit and re-render
+                this.circuitService.addElement(element);
                 this.circuitRenderer.render();
             });
         });
     }
-            
+
     /**
      * Generates a random position for testing purposes.
      * @returns {Position} A random Position instance.
      */
     randomPosition() {
-            const x = Math.floor(Math.random() * this.canvas.width);
-            const y = Math.floor(Math.random() * this.canvas.height);
-            return new Position(x, y); // Return an instance of Position
+        const x = Math.floor(Math.random() * this.canvas.width);
+        const y = Math.floor(Math.random() * this.canvas.height);
+        return new Position(x, y);
     }
 
     /**
      * Initializes the GUI by rendering the circuit and binding UI controls.
      */
     initialize() {
-        // Initial rendering
         this.circuitRenderer.render();
-
-        // Bind UI controls to actions
         this.bindUIControls();
+        this.setupCanvasInteractions();
     }
 
     /**
-     * Sets up mouse interactions for dragging terminals.
+     * Sets up canvas interactions for dragging elements.
      */
     setupCanvasInteractions() {
         this.canvas.addEventListener('mousedown', (event) => {
