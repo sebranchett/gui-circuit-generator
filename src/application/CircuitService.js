@@ -1,20 +1,25 @@
+import { EventEmitter } from 'events';
 import { Circuit } from '../domain/aggregates/Circuit.js';
 import { Element } from '../domain/entities/Element.js';
-import { generateId } from '../utils/idGenerator.js'; // Import the ID generator
-
+import { generateId } from '../utils/idGenerator.js';
 
 /**
  * CircuitService orchestrates operations on the Circuit aggregate,
  * ensuring high-level use cases like adding, deleting, and connecting elements
  * while delegating validation and low-level operations to the Circuit aggregate.
+ *
+ * Now, CircuitService acts as an EventEmitter, broadcasting events whenever
+ * circuit changes occur. This enables an **event-driven UI**, where the GUI
+ * updates in response to state changes.
  */
-export class CircuitService {
+export class CircuitService extends EventEmitter {
     /**
      * Constructs a new CircuitService.
      * 
      * @param {Circuit} circuit - The circuit aggregate to manage.
      */
     constructor(circuit) {
+        super(); // Extend EventEmitter functionality
         /**
          * The circuit aggregate representing the current circuit design.
          * @type {Circuit}
@@ -29,6 +34,8 @@ export class CircuitService {
      * adheres to all circuit-level rules, such as uniqueness of element ID and
      * non-conflicting node positions.
      * 
+     * Emits an **"update" event** after successfully adding the element.
+     *
      * @param {Element} element - The element to add.
      * @throws {Error} If the element violates circuit rules.
      */
@@ -41,6 +48,9 @@ export class CircuitService {
     
         this.circuit.validateAddElement(element); // Delegate validation to Circuit
         this.circuit.elements.push(element); // Add the element to the circuit
+
+        // Notify subscribers (GUI, renderers) about the update
+        this.emit('update', { type: 'addElement', element });
     }
 
     /**
@@ -49,9 +59,17 @@ export class CircuitService {
      * Removes the element from the list of elements and updates any connections
      * involving the deleted element.
      * 
+     * Emits an **"update" event** after successfully deleting the element.
+     *
      * @param {string} elementId - The unique ID of the element to delete.
      */
     deleteElement(elementId) {
+        const element = this.circuit.elements.find(el => el.id === elementId);
+        if (!element) {
+            console.warn(`Element with ID "${elementId}" not found.`);
+            return;
+        }
+
         // Remove the element from the circuit
         this.circuit.elements = this.circuit.elements.filter(el => el.id !== elementId);
 
@@ -64,6 +82,9 @@ export class CircuitService {
                 this.circuit.connections.set(key, updatedConnections); // Update connections
             }
         }
+
+        // Notify subscribers about the update
+        this.emit('update', { type: 'deleteElement', elementId });
     }
 
     /**
@@ -72,12 +93,19 @@ export class CircuitService {
      * Delegates validation to the Circuit aggregate and establishes the connection
      * if the rules are met.
      * 
+     * Emits an **"update" event** after successfully connecting the elements.
+     *
      * @param {Element} element1 - The first element to connect.
      * @param {Element} element2 - The second element to connect.
      * @throws {Error} If the connection violates circuit rules.
      */
     connectElements(element1, element2) {
         this.circuit.validateConnection(element1, element2); // Delegate to Circuit
+        this.circuit.connections.set(element1.id, [...(this.circuit.connections.get(element1.id) || []), element2]);
+        this.circuit.connections.set(element2.id, [...(this.circuit.connections.get(element2.id) || []), element1]);
+
+        // Notify subscribers about the update
+        this.emit('update', { type: 'connectElements', elements: [element1, element2] });
     }
 
     /**
