@@ -1,3 +1,7 @@
+/**
+ * 	A simple map storing factory functions for elements. Used for lookup
+ * 	when creating new elements based on their type.
+ */
 export const ElementRegistry = {
     _registry: {},
 
@@ -30,3 +34,6 @@ export const ElementRegistry = {
         return Object.keys(this._registry);
     }
 };
+
+
+

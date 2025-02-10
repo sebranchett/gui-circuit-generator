@@ -21,7 +21,7 @@ describe('GUIAdapter Tests', () => {
             button.id = id;
             document.body.appendChild(button);
         });
-    
+
         // Mock canvas element
         canvas = {
             width: 800,
@@ -40,10 +40,12 @@ describe('GUIAdapter Tests', () => {
             addEventListener: sinon.spy(),
             removeEventListener: sinon.spy(),
         };
-    
+
+        console.log("🔎 Available Element Types:", ElementRegistry.getTypes()); // ✅ Debugging output
+        // console.log("ElementRegistry:", ElementRegistry); // ✅ Debugging output
         // Create GUIAdapter instance
         const circuit = new Circuit();
-        const circuitService = new CircuitService(circuit);
+        const circuitService = new CircuitService(circuit, ElementRegistry);
         guiAdapter = new GUIAdapter(canvas, circuitService, ElementRegistry, rendererFactory);
     });
     

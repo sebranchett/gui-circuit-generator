@@ -1,4 +1,4 @@
-import { ElementRegistry } from '../adapters/ElementRegistry.js';
+import { ElementRegistry } from '../domain/factories/ElementRegistry.js';
 import { RendererFactory } from '../gui/renderers/RendererFactory.js';
 import { Resistor } from '../domain/entities/Resistor.js';
 import { Wire } from '../domain/entities/Wire.js';
