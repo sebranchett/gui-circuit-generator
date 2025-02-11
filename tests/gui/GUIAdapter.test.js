@@ -1,3 +1,4 @@
+import '../../src/config/settings.js'; // ✅ Ensures registration happens before tests
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { setupJsdom } from '../setup/jsdomSetup.js';
@@ -12,7 +13,10 @@ describe('GUIAdapter Tests', () => {
     let canvas;
     let guiAdapter;
 
+    console.log("🔍 ElementRegistry before test:", ElementRegistry.getTypes());
+
     beforeEach(() => {
+        console.log("🔍 ElementRegistry before test:", ElementRegistry.getTypes());
         setupJsdom();
     
         // Add required buttons to the DOM
@@ -41,9 +45,6 @@ describe('GUIAdapter Tests', () => {
             removeEventListener: sinon.spy(),
         };
 
-        console.log("🔎 Available Element Types:", ElementRegistry.getTypes()); // ✅ Debugging output
-        // console.log("ElementRegistry:", ElementRegistry); // ✅ Debugging output
-        // Create GUIAdapter instance
         const circuit = new Circuit();
         const circuitService = new CircuitService(circuit, ElementRegistry);
         guiAdapter = new GUIAdapter(canvas, circuitService, ElementRegistry, rendererFactory);

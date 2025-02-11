@@ -1,33 +1,22 @@
-import { AddElementCommand } from "./AddElementCommand.js";
-import { MoveElementCommand } from "./MoveElementCommand.js";
-
-/**
- * CommandFactory is responsible for registering and retrieving commands dynamically.
- */
 export class CommandFactory {
     constructor() {
         this.commands = new Map();
-
-        // Register available commands
-        this.register("addElement", new AddElementCommand());
-        this.register("moveElement", new MoveElementCommand());
     }
 
     /**
-     * Registers a command instance with a unique name.
-     * @param {string} name - The command name (e.g., "addElement").
-     * @param {Command} commandInstance - The command instance.
+     * Registers a new command dynamically.
      */
-    register(name, commandInstance) {
-        this.commands.set(name, commandInstance);
+    register(name, CommandClass) {
+        this.commands.set(name, (...args) => new CommandClass(...args));
     }
 
     /**
-     * Retrieves a command instance by name.
-     * @param {string} name - The name of the command.
-     * @returns {Command} The command instance.
+     * Retrieves a command instance dynamically.
      */
-    get(name) {
-        return this.commands.get(name);
+    get(name, ...args) {
+        if (!this.commands.has(name)) {
+            throw new Error(`Command "${name}" not found.`);
+        }
+        return this.commands.get(name)(...args);
     }
 }

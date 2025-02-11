@@ -40,12 +40,6 @@ describe("CircuitService Tests", () => {
         });
 
         it("should process a commandExecuted event for addElement", () => {
-            console.log("🔎 Available Element Types:", ElementRegistry.getTypes());
-        
-            // Register MockElement
-            ElementRegistry.register("MockElement", (id, nodes, label, properties) =>
-                new MockElement(id, nodes, label, properties)
-            );
         
             // Simulating raw position data (as sent by events)
             const nodes = [

@@ -1,16 +1,24 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
 import { Circuit } from '../../src/domain/aggregates/Circuit.js';
 import { CircuitService } from '../../src/application/CircuitService.js';
 import { MockElement } from './MockElement.js'; // A mock element class for testing
 import { Position } from '../../src/domain/valueObjects/Position.js';
+import { ElementRegistry } from '../../src/config/settings.js';
 
 describe('CircuitService Tests', () => {
     let circuit;
     let circuitService;
+    let emitSpy;
 
     beforeEach(() => {
         circuit = new Circuit();
-        circuitService = new CircuitService(circuit);
+
+        circuitService = new CircuitService(circuit, ElementRegistry);
+
+        // Ensure emitSpy is correctly tracking circuitService.emit
+        emitSpy = sinon.spy(circuitService, "emit");
+
     });
 
     describe('addElement', () => {
@@ -41,8 +49,35 @@ describe('CircuitService Tests', () => {
             expect(() => circuitService.addElement(element2)).to.throw(
                 'Element with id E1 is already in the circuit.'
             );
+            // delete Element
+            circuitService.deleteElement('E1');
+
         });
-    });
+
+        it("should add an element to the circuit and emit an update", function (done) {
+            this.timeout(5000); // ✅ Only works in function declarations
+
+            const element = new MockElement("E1", [
+                new Position(10, 20),
+                new Position(30, 40),
+            ]);
+
+            circuitService.addElement(element);
+
+            process.nextTick(() => {
+                try {
+                    expect(circuit.elements).to.include(element);
+
+                    const emittedElement = emitSpy.getCalls()[0].args[1].element;
+                    expect(emittedElement.id).to.equal(element.id);
+
+                    done(); // Ensures Mocha completes successfully
+                } catch (err) {
+                    done(err); // Ensures Mocha captures errors
+                }
+            });
+        });
+            });
 
     describe('deleteElement', () => {
         it('should delete an element from the circuit', () => {

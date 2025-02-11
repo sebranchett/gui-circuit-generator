@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { Circuit } from '../domain/aggregates/Circuit.js';
 import { Element } from '../domain/entities/Element.js';
 import { generateId } from '../utils/idGenerator.js';
-import { ElementRegistry } from "../domain/factories/ElementRegistry.js";
+import { ElementRegistry } from "../config/settings.js";
 import { Position } from '../domain/valueObjects/Position.js';
 import { Properties } from '../domain/valueObjects/Properties.js';
 
@@ -31,42 +31,38 @@ export class CircuitService extends EventEmitter {
         this.circuit = circuit;
         this.elementRegistry = elementRegistry;
         this.on("commandExecuted", (event) => {
-            console.log("📥 CircuitService received commandExecuted event:", event);
-
             if (event.type === "addElement") {
-                console.log("📡 CircuitService processing addElement...");
-
                 try {
                     const elementFactory = this.elementRegistry.get(event.elementType);
                     if (!elementFactory) {
-                        throw new Error(`❌ No factory registered for element type: ${event.elementType}`);
+                        throw new Error(` No factory registered for element type: ${event.elementType}`);
                     }
 
                     // Ensure event.nodes is an array of Position instances
                     if (!Array.isArray(event.nodes)) {
-                        throw new Error("❌ Nodes must be provided as an array.");
+                        throw new Error(" Nodes must be provided as an array.");
                     }
 
                     // We translate node payloads from the event into Position instances
-                    const nodes = event.nodes.map(node => new Position(node.x, node.y)); // ✅ Convert to Position instances
+                    const nodes = event.nodes.map(node => new Position(node.x, node.y)); //  Convert to Position instances
 
                     // We translate properties payloads into instances of Propertiies
-                    const properties = event.properties ? new Properties(event.properties) : new Properties(); // ✅ Convert to Properties instance
+                    const properties = event.properties ? new Properties(event.properties) : new Properties(); //  Convert to Properties instance
 
-                    // ✅ Correctly call the factory function
+                    // Correctly call the factory function
                     const newElement = elementFactory(
                         undefined, // Auto-generate ID
-                        nodes,     // ✅ Correct nodes
-                        null,      // ✅ Label (default to null)
-                        properties         // ✅ Properties (default to empty object)
+                        nodes,     // Correct nodes
+                        null,      // Label (default to null)
+                        properties // Properties (default to empty object)
                     );
 
                     console.log("✅ Created New Element:", newElement);
 
                     this.addElement(newElement);
-                    console.log("✅ Created New Element:", newElement);
+                    console.log("Created New Element:", newElement);
                 } catch (error) {
-                    console.error(`❌ Error creating element: ${error.message}`);
+                    console.error(`Error creating element: ${error.message}`);
                 }
             }
         });

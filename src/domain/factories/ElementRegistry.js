@@ -2,8 +2,14 @@
  * 	A simple map storing factory functions for elements. Used for lookup
  * 	when creating new elements based on their type.
  */
-export const ElementRegistry = {
-    _registry: {},
+class ElementRegistryClass  {
+    constructor() {
+        if (!ElementRegistryClass.instance) {
+            this._registry = {};
+            ElementRegistryClass.instance = this;
+        }
+        return ElementRegistryClass.instance;
+    }
 
     /**
      * Registers a new element type.
@@ -15,7 +21,7 @@ export const ElementRegistry = {
             throw new Error(`Element type "${type}" is already registered.`);
         }
         this._registry[type] = factoryFunction;
-    },
+    }
 
     /**
      * Retrieves the factory function for a given element type.
@@ -24,7 +30,7 @@ export const ElementRegistry = {
      */
     get(type) {
         return this._registry[type];
-    },
+    }
 
     /**
      * Retrieves all registered element types.
@@ -34,6 +40,12 @@ export const ElementRegistry = {
         return Object.keys(this._registry);
     }
 };
+
+const ElementRegistry = new ElementRegistryClass();
+Object.freeze(ElementRegistry); // Ensures immutability
+
+export { ElementRegistry };
+export default ElementRegistry;
 
 
 

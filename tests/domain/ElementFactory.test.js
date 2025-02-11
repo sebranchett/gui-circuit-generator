@@ -5,16 +5,18 @@ import { MockElement } from "./MockElement.js";
 import { Position } from "../../src/domain/valueObjects/Position.js";
 
 describe("ElementFactory Tests", () => {
+    ElementRegistry.register("MockElement", (id, nodes, properties) =>
+        new MockElement(id, nodes, properties)
+    );
+
     beforeEach(() => {
-        // Register a mock element type
-        ElementRegistry.register("MockElement", (id, nodes, properties) => 
-            new MockElement(id, nodes, properties)
-        );
+        // Nothing to do before each test for now
+
     });
 
     afterEach(() => {
         // Reset registry after each test
-        ElementRegistry._registry = {};
+        // ElementRegistry._registry = {};
     });
 
     it("should create an instance of a registered element", () => {

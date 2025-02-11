@@ -45,11 +45,12 @@ export class GUIAdapter {
      * @param {Object} elementRegistry - The registry of circuit elements.
      * @param {RendererFactory} rendererFactory - The factory for creating element renderers.
      */
-    constructor(canvas, circuitService, elementRegistry, rendererFactory) {
+    constructor(canvas, circuitService, elementRegistry, rendererFactory, commandFactory) {
         this.canvas = canvas;
         this.circuitService = circuitService;
         this.elementRegistry = elementRegistry;
         this.circuitRenderer = new CircuitRenderer(canvas, circuitService, rendererFactory);
+        this.commandFactory = commandFactory;
         
         this.commandFactory = new CommandFactory(circuitService, this.circuitRenderer, elementRegistry);
         this.commandHistory = new CommandHistory();
@@ -60,19 +61,13 @@ export class GUIAdapter {
      * Instead of directly modifying circuit state, this now delegates execution to CommandFactory.
      */
     bindUIControls() {
-        this.elementRegistry.getTypes().forEach((type) => {
-            const buttonId = `add${type}`;
-            const button = document.getElementById(buttonId);
-
-            if (!button) {
-                console.warn(`Button with ID "${buttonId}" not found.`);
-                return;
+        this.commandFactory.commands.forEach((createCommand, name) => {
+            const button = document.getElementById(`button-${name}`);
+            if (button) {
+                button.addEventListener("click", () => createCommand().execute());
             }
-
-            button.addEventListener("click", () => this.executeCommand("addElement", type));
         });
-    }
-
+}
     /**
      * Executes a command by retrieving it from the CommandFactory and executing via CommandHistory.
      * @param {string} commandName - The name of the command to execute.
@@ -96,6 +91,9 @@ export class GUIAdapter {
         this.circuitRenderer.render();
         this.bindUIControls();
         this.setupCanvasInteractions();
+
+        // Listen for UI updates from CircuitService
+        this.circuitService.on("update", () => this.circuitRenderer.render());
     }
 
     /**
