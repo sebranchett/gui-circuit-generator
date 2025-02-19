@@ -1,4 +1,5 @@
 import { GUICommand } from "./GUICommand.js";
+import { Position } from "../../domain/valueObjects/Position.js";
 
 /**
  * Command to add an element to the circuit.
@@ -14,7 +15,7 @@ export class AddElementCommand extends GUICommand {
     }
 
     execute() {
-        console.log(`Executing AddElementCommand for ${this.elementType}`);
+        console.log("Executing AddElementCommand for:", this.elementType);
 
         // Retrieve the factory function for the element
         const factory = this.elementRegistry.get(this.elementType);

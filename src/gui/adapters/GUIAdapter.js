@@ -1,5 +1,4 @@
 import { CircuitRenderer } from "../renderers/CircuitRenderer.js";
-import { CommandFactory } from "../commands/CommandFactory.js";
 import { CommandHistory } from "../commands/CommandHistory.js";
 
 /**
@@ -44,15 +43,16 @@ export class GUIAdapter {
      * @param {CircuitService} circuitService - The service managing circuit logic.
      * @param {Object} elementRegistry - The registry of circuit elements.
      * @param {RendererFactory} rendererFactory - The factory for creating element renderers.
+     * @param {GUICommandRegistry} commandFactory - The factory for creating commands.
      */
-    constructor(canvas, circuitService, elementRegistry, rendererFactory, commandFactory) {
+    constructor(canvas, circuitService, elementRegistry, rendererFactory, guiCommandRegistry) {
         this.canvas = canvas;
         this.circuitService = circuitService;
         this.elementRegistry = elementRegistry;
         this.circuitRenderer = new CircuitRenderer(canvas, circuitService, rendererFactory);
-        this.commandFactory = commandFactory;
+        this.guiCommandRegistry = guiCommandRegistry;
         
-        this.commandFactory = new CommandFactory(circuitService, this.circuitRenderer, elementRegistry);
+        // this.commandFactory = new GUICommandFactory(circuitService, this.circuitRenderer, elementRegistry);
         this.commandHistory = new CommandHistory();
     }
 
@@ -61,14 +61,43 @@ export class GUIAdapter {
      * Instead of directly modifying circuit state, this now delegates execution to CommandFactory.
      */
     bindUIControls() {
-        this.commandFactory.commands.forEach((createCommand, name) => {
-            const button = document.getElementById(`button-${name}`);
+        console.log("🔍 Binding UI controls in GUIAdapter...");
+        console.log("Commands available:", this.guiCommandRegistry.getTypes());
+
+        this.elementRegistry.getTypes().forEach((elementType) => {
+            const buttonName = `add${elementType}`;  // Format should match HTML IDs
+            console.log(`🔍 Searching for button: ${buttonName}`);
+
+            const button = document.getElementById(buttonName);
             if (button) {
-                button.addEventListener("click", () => createCommand().execute());
+                console.log(`✅ Found button: ${button.id}, binding addElement command for ${elementType}`);
+
+                button.addEventListener("click", () => {
+                    console.log(`🛠 Executing addElement command for: ${elementType}`);
+
+                    // Retrieve the correct command with the element type
+                    const command = this.guiCommandRegistry.get(
+                        "addElement",
+                        // this,  // Pass GUIAdapter
+                        this.circuitService,
+                        this.circuitRenderer,
+                        this.elementRegistry,
+                        elementType
+                    );
+
+                    if (command) {
+                        command.execute();
+                        console.log(`✅ Command 'addElement' executed for ${elementType}`);
+                    } else {
+                        console.warn(`⚠️ Command 'addElement' not found for ${elementType}`);
+                    }
+                });
+            } else {
+                console.warn(`⚠️ Button for adding ${elementType} not found`);
             }
         });
-}
-    /**
+    }
+        /**
      * Executes a command by retrieving it from the CommandFactory and executing via CommandHistory.
      * @param {string} commandName - The name of the command to execute.
      * @param {...any} args - Arguments to pass to the command.

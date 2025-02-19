@@ -6,21 +6,18 @@ import { GUIAdapter } from '../../src/gui/adapters/GUIAdapter.js';
 import { Circuit } from '../../src/domain/aggregates/Circuit.js';
 import { CircuitService } from '../../src/application/CircuitService.js';
 import { RendererFactory } from '../../src/gui/renderers/RendererFactory.js';
-import { ElementRegistry, rendererFactory } from '../../src/config/settings.js';
+import { ElementRegistry, rendererFactory, GUICommandRegistry } from '../../src/config/settings.js';
 
 
 describe('GUIAdapter Tests', () => {
     let canvas;
     let guiAdapter;
 
-    console.log("🔍 ElementRegistry before test:", ElementRegistry.getTypes());
-
     beforeEach(() => {
-        console.log("🔍 ElementRegistry before test:", ElementRegistry.getTypes());
         setupJsdom();
     
         // Add required buttons to the DOM
-        ['addResistor', 'addWire'].forEach((id) => {
+        ['addResistor', 'addWire', 'addMockElement'].forEach((id) => {
             const button = document.createElement('button');
             button.id = id;
             document.body.appendChild(button);
@@ -47,7 +44,7 @@ describe('GUIAdapter Tests', () => {
 
         const circuit = new Circuit();
         const circuitService = new CircuitService(circuit, ElementRegistry);
-        guiAdapter = new GUIAdapter(canvas, circuitService, ElementRegistry, rendererFactory);
+        guiAdapter = new GUIAdapter(canvas, circuitService, ElementRegistry, rendererFactory, GUICommandRegistry);
     });
     
     it('should initialize without errors', () => {

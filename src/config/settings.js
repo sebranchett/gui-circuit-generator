@@ -6,6 +6,9 @@ import { ResistorRenderer } from '../gui/renderers/ResistorRenderer.js';
 import { WireRenderer } from '../gui/renderers/WireRenderer.js';
 import { generateId } from '../utils/idGenerator.js';
 import { Properties } from '../domain/valueObjects/Properties.js';
+import { GUICommandRegistry } from "../gui/commands/GUICommandRegistry.js";
+import { AddElementCommand } from "../gui/commands/AddElementCommand.js";
+
 
 // Ensure elements are registered once
 if (ElementRegistry.getTypes().length === 0) {
@@ -21,10 +24,19 @@ if (ElementRegistry.getTypes().length === 0) {
 
 console.log(" ElementRegistry after registration:", ElementRegistry.getTypes());
 
+// ✅ Register commands globally before GUI initialization
+GUICommandRegistry.register("addElement", (circuitService, circuitRenderer, elementRegistry, elementType) =>
+    new AddElementCommand(circuitService, circuitRenderer, elementRegistry, elementType)
+);
+
+console.log("✅ Commands registered:", GUICommandRegistry.getTypes());
+console.log("✅ Commands:", GUICommandRegistry._registry);
+console.log("✅ Command name:", GUICommandRegistry.get("addElement"));
+
 // Configure RendererFactory
 const rendererFactory = new RendererFactory();
 rendererFactory.register('resistor', ResistorRenderer);
 rendererFactory.register('wire', WireRenderer);
 
-export { ElementRegistry, rendererFactory };
+export { ElementRegistry, rendererFactory, GUICommandRegistry };
 export default ElementRegistry; // Add default export
