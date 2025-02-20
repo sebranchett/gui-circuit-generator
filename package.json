@@ -5,7 +5,8 @@
     "main": "main.js",
     "scripts": {
         "test": "mocha 'tests/**/*.test.js'",
-        "build": "rollup -c && cp src/gui/gui.html dist/"
+        "build": "rollup -c && cp src/gui/gui.html dist/",
+        "serve": "npm run build && http-server"
     },
     "type": "module",
     "author": "",
@@ -16,6 +17,7 @@
         "mocha": "^10.0.0",
         "rollup": "^2.79.2",
         "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-copy": "3.5.0",
         "sinon": "^19.0.2"
     }
 }
