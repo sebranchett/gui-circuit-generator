@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter.js';
 import { Circuit } from '../domain/aggregates/Circuit.js';
 import { Element } from '../domain/entities/Element.js';
 import { generateId } from '../utils/idGenerator.js';

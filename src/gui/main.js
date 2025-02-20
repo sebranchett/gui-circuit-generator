@@ -2,7 +2,7 @@ import { Circuit } from '../domain/aggregates/Circuit.js';
 import { CircuitService } from '../application/CircuitService.js';
 import { GUIAdapter } from './adapters/GUIAdapter.js';
 import { ElementRegistry, rendererFactory, GUICommandRegistry  }   from '../config/settings.js'; // Assuming ElementRegistry is configured in settings.js
-import document from 'document'; // Assuming document is a global object
+// import document from 'document'; // Assuming document is a global object
 
 // Set up the circuit and services
 const circuit = new Circuit();
