@@ -10,7 +10,7 @@ export class ElementRenderer {
     renderTerminal(position) {
         this.context.fillStyle = 'black';
         this.context.beginPath();
-        this.context.arc(position.x, position.y, 5, 0, Math.PI * 2);
+        this.context.arc(position.x, position.y, 2, 0, Math.PI * 2);
         this.context.fill();
     }
 

@@ -12,33 +12,45 @@ export class AddElementCommand extends GUICommand {
         this.circuitRenderer = circuitRenderer;
         this.elementRegistry = elementRegistry;
         this.elementType = elementType;
+
+        // Default positioning for new elements
+        this.DEFAULT_X = 400;  // Center X position
+        this.DEFAULT_Y = 300;  // Center Y position
+        this.ELEMENT_WIDTH = 60;  // Width for default elements (matches image size)
     }
 
-    execute() {
-        console.log("Executing AddElementCommand for:", this.elementType);
+    /**
+     * Executes the command with provided node positions.
+     * @param {Position[]} nodes - The precise node positions calculated by the renderer.
+     */
+    execute(nodes = null) {
+        console.log(`Executing AddElementCommand for: ${this.elementType}`);
 
-        // Retrieve the factory function for the element
         const factory = this.elementRegistry.get(this.elementType);
         if (!factory) {
-            console.error(`Factory function for element type "${this.elementType}" not found.`);
+            console.error(`❌ Factory function for element type "${this.elementType}" not found.`);
             return;
         }
 
-        // Generate valid node positions
-        const nodes = [
-            { x: Math.random() * 800, y: Math.random() * 600 },
-            { x: Math.random() * 800, y: Math.random() * 600 }
-        ].map(pos => new Position(pos.x, pos.y));
+        // If no nodes are provided, use a default position
+        if (!nodes || !Array.isArray(nodes) || nodes.length !== 2) {
+            console.warn("⚠️ No valid node positions provided. Using default centered position.");
 
-        const element = factory(undefined, nodes, null, {}); // ✅ Create the element
+            nodes = [
+                new Position(this.DEFAULT_X - this.ELEMENT_WIDTH / 2, this.DEFAULT_Y), // Left terminal
+                new Position(this.DEFAULT_X + this.ELEMENT_WIDTH / 2, this.DEFAULT_Y)  // Right terminal
+            ];
+        }
 
-        //  Directly modify circuit state
+        console.log(`📌 Final node positions:`, nodes);
+
+        // Create the element with computed positions
+        const element = factory(undefined, nodes, null, {});
+        console.log("✅ Element created:", element);
+
+        // Add to circuit and update UI
         this.circuitService.addElement(element);
-
-        //  Notify the UI about the update
         this.circuitService.emit("update", { type: "addElement", element });
-
-        // Immediately update the renderer
         this.circuitRenderer.render();
     }
 
