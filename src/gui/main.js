@@ -1,4 +1,7 @@
-import { initializeCircuitApp } from './common.js';
+import { initializeCircuitApp, injectStyles } from './common.js';
+
+// Inject styles first
+injectStyles();
 
 const stage = document.querySelector('.circuit-stage');
 const canvas = document.getElementById('circuitCanvas');

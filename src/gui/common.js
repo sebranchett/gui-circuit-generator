@@ -11,6 +11,121 @@ import { initMenu } from "./menu/initMenu.js";
 import { Logger } from "../utils/Logger.js";
 import { globalPerformanceMonitor } from "../utils/PerformanceUtils.js";
 
+/* ---------- Style Injection ---------- */
+export function injectStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Main layout styling */
+    .controls {
+      margin-top: 10px;
+    }
+
+    /* Ensure body and html have clean defaults */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    /* Circuit stage - main container */
+    .circuit-stage {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Menu bar - fixed at top, no scrolling */
+    .menubar {
+      flex-shrink: 0;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      z-index: 1000;
+    }
+
+    /* Canvas container - this is where scrollbars should appear */
+    .canvas-container {
+      flex: 1;
+      overflow: auto;
+      position: relative;
+      border: 1px solid #ccc;
+      height: 100%;
+      min-height: 0;
+    }
+
+    /* Canvas styling */
+    #circuitCanvas {
+      display: block;
+      width: max(100%, 2400px);
+      height: max(100%, 1600px);
+      min-width: 2400px;
+      min-height: 1600px;
+      max-width: none;
+      max-height: none;
+      border: none;
+    }
+
+    /* CLEAN SCROLLBAR STYLING */
+    .canvas-container::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background: transparent;
+    }
+
+    .canvas-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .canvas-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      border: none;
+    }
+
+    .canvas-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Test button styling - remove in production */
+    .debug-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      padding: 8px 12px;
+      background: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .debug-button:hover {
+      background: #0056CC;
+    }
+
+    .debug-button:active {
+      background: #004499;
+    }
+
+    /* Reserve layout, but keep pixels hidden until ready */
+    #circuitCanvas {
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+
+    .circuit-stage.ready #circuitCanvas {
+      opacity: 1;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 /* ---------- HiDPI helpers ---------- */
 function fitCanvasHiDPIOnce(canvas){
   const dpr  = window.devicePixelRatio || 1;
