@@ -31,7 +31,6 @@ export function createCircuitDOM() {
   canvasContainer.appendChild(canvas);
   stage.appendChild(menubar);
   stage.appendChild(canvasContainer);
-  document.body.appendChild(stage);
 
   const controls = null; // controls no longer used in this layout
 
@@ -40,7 +39,7 @@ export function createCircuitDOM() {
 }
 
 /* ---------- Style Injection ---------- */
-export function injectStyles() {
+export function createStyles() {
   const style = document.createElement('style');
   style.textContent = `
     /* Main layout styling */
@@ -151,7 +150,7 @@ export function injectStyles() {
       opacity: 1;
     }
   `;
-  document.head.appendChild(style);
+  return style;
 }
 
 /* ---------- HiDPI helpers ---------- */
