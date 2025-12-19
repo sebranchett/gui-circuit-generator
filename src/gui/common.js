@@ -66,12 +66,12 @@ export function createStyles() {
     }
 
     /* Menu bar - fixed at top, no scrolling */
-    .menubar {
-      flex-shrink: 0;
-      background: white;
-      border-bottom: 1px solid #e0e0e0;
-      z-index: 1000;
-    }
+    // .menubar {
+    //   flex-shrink: 0;
+    //   background: white;
+    //   border-bottom: 1px solid #e0e0e0;
+    //   z-index: 1000;
+    // }
 
     /* Canvas container - this is where scrollbars should appear */
     .canvas-container {
