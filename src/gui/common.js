@@ -11,6 +11,34 @@ import { initMenu } from "./menu/initMenu.js";
 import { Logger } from "../utils/Logger.js";
 import { globalPerformanceMonitor } from "../utils/PerformanceUtils.js";
 
+/* ---------- DOM Creation ---------- */
+export function createCircuitDOM() {
+  // Create main structure
+  const stage = document.createElement('div');
+  stage.className = 'circuit-stage';
+
+  const menubar = document.createElement('div');
+  menubar.className = 'menubar controls';
+  menubar.id = 'menubar';
+
+  const canvasContainer = document.createElement('div');
+  canvasContainer.className = 'canvas-container';
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'circuitCanvas';
+
+  // Assemble structure
+  canvasContainer.appendChild(canvas);
+  stage.appendChild(menubar);
+  stage.appendChild(canvasContainer);
+  document.body.appendChild(stage);
+
+  const controls = null; // controls no longer used in this layout
+
+  // Return references
+  return { stage, canvas, controls };
+}
+
 /* ---------- Style Injection ---------- */
 export function injectStyles() {
   const style = document.createElement('style');

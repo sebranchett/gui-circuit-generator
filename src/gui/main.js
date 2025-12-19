@@ -1,10 +1,10 @@
-import { initializeCircuitApp, injectStyles } from './common.js';
+import { initializeCircuitApp, injectStyles, createCircuitDOM } from './common.js';
 
 // Inject styles first
 injectStyles();
 
-const stage = document.querySelector('.circuit-stage');
-const canvas = document.getElementById('circuitCanvas');
-const controls = document.querySelector('.controls');
+// Create DOM structure
+const { stage, canvas, controls } = createCircuitDOM();
 
+// Initialize the circuit application
 const { circuit, circuitService, guiAdapter } = await initializeCircuitApp(stage, canvas, controls);
