@@ -3,9 +3,9 @@ import { MenuBar } from "./MenuBar.js";
 
 async function loadJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(url); return r.json(); }
 
-export async function initMenu(configUrl = "./static/menu.config.json") {
+export async function initMenu(stage, configUrl = "./static/menu.config.json") {
   const cfg = await loadJSON(configUrl);
-  const menu = new MenuBar(document.getElementById("menubar"));
+  const menu = new MenuBar(stage.querySelector("#menubar"));
   menu.renderFromConfig(cfg);
 
   // Note: Keyboard shortcuts are handled by GUIAdapter.bindShortcuts()

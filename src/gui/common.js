@@ -204,7 +204,7 @@ export async function initializeCircuitApp(stage, canvas, controls) {
   );
 
   /* ---------- Menu (emits ui:action only) ---------- */
-  await initMenu();
+  await initMenu(stage);
 
   /* ---------- Commands, first render, reveal, THEN start resize observer ---------- */
   globalPerformanceMonitor.startTiming('app-initialization');
